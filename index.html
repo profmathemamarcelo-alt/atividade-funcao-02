@@ -97,6 +97,9 @@
     </div>
 
     <!-- Nota: links blob são locais ao navegador; use "Compartilhar" para enviar o arquivo para outros apps/dispositivos. -->
+    
+
+    
   </div>
 
   <script>
@@ -104,48 +107,48 @@
     const $ = (s)=>document.querySelector(s);
     function isValidURL(str){ try{ const u=new URL(str); return ['http:','https:'].includes(u.protocol);}catch{return false;} }
     function clearCanvas(c){ const ctx=c.getContext('2d'); if(ctx) ctx.clearRect(0,0,c.width,c.height); }
-    function loadScript(src, timeoutMs=6000){ return new Promise((res)=>{ const s=document.createElement('script'); let done=false; const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); s.src=src; s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; document.head.appendChild(s); }); }
+    function loadScript(src, timeoutMs=6000){ return new Promise((res)=>{ const s=document.createElement('script'); let done=false; const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); s.src=src; s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; document.head.appendChild(s); }); }); }
     function pdfSafe(str){ return (str||'').replace(/Δ/g,'Delta'); }
-    function sanitizeFilename(str){ return (str||'').normalize('NFD').replace(/[^\w\\s-]/g,'').trim().replace(/\\s+/g,'-').toLowerCase(); }
+    function sanitizeFilename(str){ return (str||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase(); }
 
     // ===== QR: garantir biblioteca + compat =====
     let _qrReadyPromise=null;
-    async function ensureQRCode(){
-      if (_qrReadyPromise) return _qrReadyPromise;
-      _qrReadyPromise = (async()=>{
-        if (window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
-        const sources = [
-          'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
-          'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
-        ];
-        for (const url of sources){
-          const ok = await loadScript(url);
-          if (ok && window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
-        }
-        const okClassic = await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
-        return !!(okClassic && window.QRCode);
-      })();
-      return _qrReadyPromise;
-    }
-
+      async function ensureQRCode(){
+        if (_qrReadyPromise) return _qrReadyPromise;
+        _qrReadyPromise = (async()=>{
+          if (window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
+          const sources = [
+            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
+          ];
+          for (const url of sources){
+            const ok = await loadScript(url);
+            if (ok && window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
+          }
+          const okClassic = await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
+          return !!(okClassic && window.QRCode);
+        })();
+        return _qrReadyPromise;
+      }
     function toCanvasCompat(canvas, text, opts){
       try{
         const fn = window.QRCode && window.QRCode.toCanvas; if(!fn) return Promise.reject(new Error('toCanvas indisponível'));
-        const maybe = fn(canvas, text, opts);
+        const maybe = fn(canvas, text, opts); // algumas builds retornam Promise
         if (maybe && typeof maybe.then==='function') return maybe;
         return new Promise((resolve, reject)=> fn(canvas, text, opts, (err)=> err?reject(err):resolve()));
       }catch(e){ return Promise.reject(e); }
     }
-
     async function drawQRToCanvas(canvas, text){
       const ok = await ensureQRCode(); if(!ok) throw new Error('Biblioteca de QR indisponível');
       const ctx = canvas.getContext('2d'); if(!ctx) throw new Error('Canvas 2D não disponível');
       clearCanvas(canvas);
 
+      // Caminho moderno
       if (typeof window.QRCode.toCanvas==='function'){
         await toCanvasCompat(canvas, text, { width:160, margin:1 });
         return canvas.toDataURL('image/png');
       }
+      // Fallback (qrcodejs clássico)
       const tmp = document.createElement('div');
       new window.QRCode(tmp, { text, width:160, height:160, correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : undefined });
       await new Promise(r=>setTimeout(r,140));
@@ -168,7 +171,7 @@
     const downloadArea=$('#download-area');
     const downloadLink=$('#download-link');
     const downloadOpen=$('#download-open');
-    const submitBtn=$('#btn-enviar');
+      const submitBtn=$('#btn-enviar');
     const shareBtn=$('#share-btn');
     const copyPageBtn=$('#copy-page-link');
 
@@ -178,25 +181,39 @@
 
     // ===== QR automático com mensagens claras =====
     async function regenerateQR(){
-      qrImageDataURL=''; if (qrMsg){ qrMsg.classList.add('hidden'); qrMsg.textContent=''; }
-      const val=linkInput.value.trim();
-      if(!val){ urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=false; return; }
+        qrImageDataURL=''; if (qrMsg){ qrMsg.classList.add('hidden'); qrMsg.textContent=''; }
+        const val=linkInput.value.trim();
+        if(!val){ urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=false; return; }
+        if(!isValidURL(val)){
+          urlHelp && urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=true; return;
+        }
+        urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); if(submitBtn) submitBtn.disabled=true;
+
+        const attempts = 3; let lastErr=null;
+        for (let i=0;i<attempts;i++){
+          try {
+            await ensureQRCode();
+            qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
+            if (qrImageDataURL){ if(submitBtn) submitBtn.disabled=false; return; }
+          } catch(e){ lastErr=e; await new Promise(r=>setTimeout(r, 200*(i+1))); }
+        }
+        console.error('Falha QR após tentativas:', lastErr);
+        if (qrMsg){ qrMsg.textContent='Falha ao gerar QR. Verifique o link e a conexão, depois tente novamente.'; qrMsg.classList.remove('hidden'); }
+        clearCanvas(qrCanvas);
+        if(submitBtn) submitBtn.disabled=false;
+      }
       if(!isValidURL(val)){
-        urlHelp && urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=true; return;
+        urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); clearCanvas(qrCanvas); return;
       }
-      urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); if(submitBtn) submitBtn.disabled=true;
-      const attempts = 3; let lastErr=null;
-      for (let i=0;i<attempts;i++){
-        try {
-          await ensureQRCode();
-          qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
-          if (qrImageDataURL){ if(submitBtn) submitBtn.disabled=false; return; }
-        } catch(e){ lastErr=e; await new Promise(r=>setTimeout(r, 200*(i+1))); }
+      urlHelp.classList.add('hidden'); linkInput.classList.remove('error');
+      try {
+        qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
+      } catch (err) {
+        console.error('Falha QR:', err);
+        qrMsg.textContent = 'Falha ao gerar QR (verifique conexão/biblioteca).';
+        qrMsg.classList.remove('hidden');
+        clearCanvas(qrCanvas);
       }
-      console.error('Falha QR após tentativas:', lastErr);
-      if (qrMsg){ qrMsg.textContent='Falha ao gerar QR. Verifique o link e a conexão, depois tente novamente.'; qrMsg.classList.remove('hidden'); }
-      clearCanvas(qrCanvas);
-      if(submitBtn) submitBtn.disabled=false;
     }
 
     linkInput.addEventListener('input', regenerateQR);
@@ -214,6 +231,7 @@
         return;
       }
       await regenerateQR();
+      // BLOQUEIA envio se o QR NÃO for gerado
       if(!qrImageDataURL){
         qrMsg.textContent = 'Não foi possível gerar o QR Code. Verifique o link e sua conexão e tente novamente.';
         qrMsg.classList.remove('hidden');
@@ -221,20 +239,21 @@
         return;
       }
 
+      // Recolhe os dados com rótulos legíveis com rótulos legíveis
       const fd=new FormData(form); const data={}; fd.forEach((v,k)=>data[k]=v);
       const fields=[
         {key:'nome', label:'Nome'},
         {key:'turma', label:'Turma'},
-        {key:'funcao', label:'Escreva a função da questão - 05'},
-        {key:'q1', label:'1) Quantas sentenças a função tem?'},
-        {key:'q2', label:'2) Quais são elas?'},
-        {key:'q3', label:'3) Qual o intervalo da primeira sentença?'},
-        {key:'q4', label:'4) Qual o intervalo da segunda sentença?'},
-        {key:'q5', label:'5) Qual o intervalo da terceira sentença?'},
-        {key:'q6', label:'6) Que tipo de função essas sentenças são?'},
-        {key:'q7', label:'7) Qual é o intervalo minímo e máximo da função da questão 5?'},
-        {key:'q8', label:'8) Quais são os valores de f(2)?'},
-        {key:'q9', label:'9) Descreva com poucas palavras, os passos que você utilizou para construir o gráfico da \n função da questão 5, usando o geogebra?'},
+        {key:'funcao', label:'Função'},
+        {key:'q1', label:'1) Quais sãoo os coeficientes a, b e c?'},
+        {key:'q2', label:'2) A parábola abre para cima ou para baixo?'},
+        {key:'q3', label:'3) Qual é o valor do discriminante Delta?'},
+        {key:'q4', label:'4) A função possui raízes reais?'},
+        {key:'q5', label:'5) Quais são as raízes (se existirem)?'},
+        {key:'q6', label:'6) Qual é a abscissa do vértice?'},
+        {key:'q7', label:'7) Qual é a ordenada do vértice?'},
+        {key:'q8', label:'8) Qual é o valor de f(0)?'},
+        {key:'q9', label:'9) Quais são os pontos que interceptam com os eixos (x e y)?'},
         {key:'q10-link', label:'10) Link do GeoGebra'}
       ];
 
@@ -264,35 +283,35 @@
       doc.setFontSize(9); doc.setTextColor(120);
       doc.text('Gerado automaticamente pelo formulário do Prof. Marcelo', margin, 820);
 
+      // Download robusto + link de fallback
       const filename = `atividade-funcao-quadratica-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
       try{
         const blob = doc.output('blob');
-        if(window.currentPdfUrl) { try{ URL.revokeObjectURL(window.currentPdfUrl); }catch(e){} }
-        window.currentPdfUrl = URL.createObjectURL(blob);
-        const downloadLink = document.getElementById('download-link');
-        downloadLink.href = window.currentPdfUrl; downloadLink.download = filename; downloadLink.textContent = filename;
+        if(currentPdfUrl) { try{ URL.revokeObjectURL(currentPdfUrl); }catch{} }
+        currentPdfUrl = URL.createObjectURL(blob);
+        downloadLink.href = currentPdfUrl; downloadLink.download = filename; downloadLink.textContent = filename;
         document.getElementById('download-area').classList.remove('hidden');
-        const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
         if(isiOS){
-          window.open(window.currentPdfUrl, '_blank');
+          // iOS prefere abrir em nova aba ao invés de download automático
+          window.open(currentPdfUrl, '_blank');
         } else {
-          const a=document.createElement('a'); a.href=window.currentPdfUrl; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+          const a=document.createElement('a'); a.href=currentPdfUrl; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
         }
-      }catch(err){ console.error('Falha no download do PDF:', err); try{ doc.save(filename); }catch(e){} }
+      }catch(err){ console.error('Falha no download do PDF:', err); try{ doc.save(filename); }catch{} }
     });
 
-    document.getElementById('download-open').addEventListener('click', ()=>{ if(window.currentPdfUrl) window.open(window.currentPdfUrl, '_blank'); });
+    downloadOpen.addEventListener('click', ()=>{ if(currentPdfUrl) window.open(currentPdfUrl, '_blank'); });
 
-    document.getElementById('share-btn').addEventListener('click', async ()=>{
-      if(!window.currentPdfUrl) return;
+    shareBtn.addEventListener('click', async ()=>{
+      if(!currentPdfUrl) return;
       try{
-        const res = await fetch(window.currentPdfUrl);
+        const res = await fetch(currentPdfUrl);
         const blob = await res.blob();
-        const file = new File([blob], (document.getElementById('download-link').download || 'atividade.pdf'), { type: 'application/pdf' });
+        const file = new File([blob], (downloadLink.download || 'atividade.pdf'), { type: 'application/pdf' });
         if(navigator.canShare && navigator.canShare({ files: [file] })){
           await navigator.share({ files: [file], title: 'Atividade – PDF', text: 'Envio do PDF da atividade' });
         } else if(navigator.share){
-          await navigator.share({ title: 'Atividade – PDF', url: window.currentPdfUrl });
+          await navigator.share({ title: 'Atividade – PDF', url: currentPdfUrl });
         } else {
           alert('Compartilhamento nativo não suportado neste navegador. Use o botão Abrir e envie manualmente.');
         }
@@ -302,13 +321,11 @@
       }
     });
 
-    document.getElementById('copy-page-link').addEventListener('click', async ()=>{
+    copyPageBtn.addEventListener('click', async ()=>{
       try{
         await navigator.clipboard.writeText(location.href);
-        const btn = document.getElementById('copy-page-link');
-        btn.textContent = 'Link copiado!'; setTimeout(()=> btn.textContent='Copiar link da página', 2000);
+        copyPageBtn.textContent = 'Link copiado!'; setTimeout(()=> copyPageBtn.textContent='Copiar link da página', 2000);
       }catch{ alert('Não foi possível copiar. Copie manualmente o endereço da barra do navegador.'); }
-    });
-  </script>
-</body>
-</html>
+    }); });
+
+    
