@@ -3,16 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Atividade - 02: Função com mais de uma Sentença e o GeoGebra</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lib moderna: QRCode.toCanvas; se não vier, faremos fallback dinâmico para qrcodejs -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <!-- jsPDF para gerar PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    .error { border-color: #ef4444 !important; }
-    button:disabled { opacity:.6; cursor:not-allowed; }
-  </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
   <div class="max-w-3xl mx-auto p-6">
