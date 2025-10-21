@@ -3,11 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atividade - GeoGebra: Função Modular</title>
+
+  <!-- Mantém aparência original: Tailwind sem preflight -->
+  <script>
+    window.tailwind = window.tailwind || {};
+    tailwind.config = { corePlugins: { preflight: false } };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- QRCode + jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
+  <style>
+    .error { border-color: #ef4444 !important; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
   <div class="max-w-3xl mx-auto p-6">
     <header class="mb-6 border-b border-slate-200 pb-4">
-      <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções com mais de uma sentença e o GeoGebra</h1>
+      <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções Modulares</h1>
       <p class="text-sm text-slate-600">Prof.: Marcelo P. Antônio</p>
     </header>
 
@@ -21,48 +38,32 @@
         <input type="text" name="turma" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
       </div>
       <div>
-        <label class="block text-sm font-medium">Escreva a função da questão - 05:</label>
+        <label class="block text-sm font-medium">1) Escreva a equação modular da questão - 01 (a):</label>
         <input type="text" name="funcao" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
       </div>
       <div>
-        <label class="block text-sm font-medium">1) Quantas sentenças a função tem?</label>
+        <label class="block text-sm font-medium">2) Escreva a equação modular da questão - 01 (b):</label>
         <input type="text" name="q1" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">2) Quais são elas?</label>
+        <label class="block text-sm font-medium">3) Escreva a equação modular da questão - 01 (c):</label>
         <input type="text" name="q2" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">3) Qual o intervalo da primeira sentença?</label>
+        <label class="block text-sm font-medium">4) Qual a solução do item a?</label>
         <input type="text" name="q3" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">4) Qual o intervalo da segunda sentença?</label>
+        <label class="block text-sm font-medium">5) Qual a solução do item b?</label>
         <input type="text" name="q4" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">5) Qual o intervalo da terceira sentença?</label>
+        <label class="block text-sm font-medium">6) Qual a solução do item c?</label>
         <input type="text" name="q5" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">6) Que tipo de função essas sentenças são?</label>
-        <input type="text" name="q6" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">7) Qual é o intervalo minímo e máximo da função da questão 5?</label>
-        <input type="text" name="q7" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">8) Quais são os valores de f(2)?</label>
-        <input type="text" name="q8" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">9) Descreva com poucas palavras, os passos que você fez para construir o gráfico da função da questão 5, usando o geogebra?</label>
-        <input type="text" name="q9" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium">10) Link da sua atividade no GeoGebra:</label>
+        <label class="block text-sm font-medium">7) Link da sua atividade realizada no GeoGebra:</label>
         <input id="q10-link" type="url" name="q10-link" placeholder="https://..." required class="w-full border border-slate-300 px-3 py-2 rounded-md mb-1" />
         <p id="url-help" class="text-xs text-rose-600 hidden">Insira uma URL válida (http:// ou https://)</p>
         <canvas id="qrcode" width="160" height="160" class="border rounded-md bg-white"></canvas>
@@ -70,8 +71,7 @@
       </div>
 
       <div class="pt-6 flex flex-wrap gap-3 justify-end">
-        <button id="btn-enviar" type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg 
-          hover:bg-indigo-700">Gerar PDF</button>
+        <button id="btn-enviar" type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Gerar PDF</button>
         <button type="reset" class="px-4 py-2 bg-gray-100 text-slate-700 rounded-lg hover:bg-gray-200">Limpar</button>
       </div>
     </form>
@@ -86,219 +86,348 @@
       </div>
     </div>
 
-    <!-- Nota: links blob são locais ao navegador; use "Compartilhar" para enviar o arquivo para outros apps/dispositivos. -->
+    <!-- Observação: links blob são locais ao navegador. Use "Compartilhar" para enviar a outros apps/dispositivos. -->
   </div>
 
-  <script>
-    // ===== Helpers =====
-    const $ = (s)=>document.querySelector(s);
-    function isValidURL(str){ try{ const u=new URL(str); return ['http:','https:'].includes(u.protocol);}catch{return false;} }
-    function clearCanvas(c){ const ctx=c.getContext('2d'); if(ctx) ctx.clearRect(0,0,c.width,c.height); }
-    function loadScript(src, timeoutMs=6000){ return new Promise((res)=>{ const s=document.createElement('script'); let done=false; const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); s.src=src; s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; document.head.appendChild(s); }); }
-    function pdfSafe(str){ return (str||'').replace(/Δ/g,'Delta'); }
-    function sanitizeFilename(str){ return (str||'').normalize('NFD').replace(/[^\w\\s-]/g,'').trim().replace(/\\s+/g,'-').toLowerCase(); }
+  <script defer>
+  (function(){
+    try{
+      const $ = (s)=>document.querySelector(s);
+      function isValidURL(str){ try{ const u=new URL(str); return ['http:','https:'].includes(u.protocol);}catch{return false;} }
+      function clearCanvas(c){ const ctx=c.getContext('2d'); if(ctx) ctx.clearRect(0,0,c.width,c.height); }
+      function loadScript(src, timeoutMs=6000){ 
+        return new Promise((res)=>{ 
+          const s=document.createElement('script'); let done=false; 
+          const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); 
+          s.src=src; s.crossOrigin='anonymous'; s.referrerPolicy='no-referrer'; 
+          s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; 
+          s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; 
+          document.head.appendChild(s); 
+        }); 
+      }
+      function pdfSafe(str){ return (str||'').replace(/Δ/g,'Delta'); }
+      function sanitizeFilename(str){ return (str||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase(); }
 
-    // ===== QR: garantir biblioteca + compat =====
-    let _qrReadyPromise=null;
-    async function ensureQRCode(){
-      if (_qrReadyPromise) return _qrReadyPromise;
-      _qrReadyPromise = (async()=>{
-        if (window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
-        const sources = [
-          'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
-          'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
-        ];
-        for (const url of sources){
-          const ok = await loadScript(url);
-          if (ok && window.QRCode && (typeof window.QRCode.toCanvas==='function' || typeof window.QRCode==='function')) return true;
+      let _qrReadyPromise=null;
+      async function ensureQRCode(){
+        if (_qrReadyPromise) return _qrReadyPromise;
+        _qrReadyPromise = (async()=>{
+          if (window.QRCode && typeof window.QRCode.toCanvas==='function') return 'modern';
+          if (window.QRCode && typeof window.QRCode==='function' && !window.QRCode.toCanvas) return 'classic';
+          const sources = [
+            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+            'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js'
+          ];
+          for (const url of sources){
+            const ok = await loadScript(url);
+            if (ok && window.QRCode && typeof window.QRCode.toCanvas==='function') return 'modern';
+          }
+          const okClassic = await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
+          if (okClassic && window.QRCode) return 'classic';
+          return null;
+        })();
+        return _qrReadyPromise;
+      }
+
+      function toCanvasCompat(canvas, text, opts){
+        try{
+          const fn = window.QRCode && window.QRCode.toCanvas; 
+          if(!fn) return Promise.reject(new Error('toCanvas indisponível'));
+          const maybe = fn(canvas, text, opts);
+          if (maybe && typeof maybe.then==='function') return maybe;
+          return new Promise((resolve, reject)=> fn(canvas, text, opts, (err)=> err?reject(err):resolve()));
+        }catch(e){ return Promise.reject(e); }
+      }
+
+      async function drawQRToCanvas(canvas, text){
+        const mode = await ensureQRCode(); 
+        if(!mode) throw new Error('Biblioteca de QR indisponível');
+        const ctx = canvas.getContext('2d'); if(!ctx) throw new Error('Canvas 2D não disponível');
+        clearCanvas(canvas);
+
+        if (mode === 'modern' && typeof window.QRCode.toCanvas==='function'){
+          await toCanvasCompat(canvas, text, { width:160, margin:1 });
+          return canvas.toDataURL('image/png');
         }
-        const okClassic = await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js');
-        return !!(okClassic && window.QRCode);
-      })();
-      return _qrReadyPromise;
-    }
-
-    function toCanvasCompat(canvas, text, opts){
-      try{
-        const fn = window.QRCode && window.QRCode.toCanvas; if(!fn) return Promise.reject(new Error('toCanvas indisponível'));
-        const maybe = fn(canvas, text, opts);
-        if (maybe && typeof maybe.then==='function') return maybe;
-        return new Promise((resolve, reject)=> fn(canvas, text, opts, (err)=> err?reject(err):resolve()));
-      }catch(e){ return Promise.reject(e); }
-    }
-
-    async function drawQRToCanvas(canvas, text){
-      const ok = await ensureQRCode(); if(!ok) throw new Error('Biblioteca de QR indisponível');
-      const ctx = canvas.getContext('2d'); if(!ctx) throw new Error('Canvas 2D não disponível');
-      clearCanvas(canvas);
-
-      if (typeof window.QRCode.toCanvas==='function'){
-        await toCanvasCompat(canvas, text, { width:160, margin:1 });
+        const tmp = document.createElement('div');
+        new window.QRCode(tmp, { text, width:160, height:160, correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : undefined });
+        await new Promise(r=>setTimeout(r,140));
+        let srcCanvas = tmp.querySelector('canvas');
+        if (!srcCanvas){
+          const img = tmp.querySelector('img'); if(!img) throw new Error('QR não gerado (fallback)');
+          canvas.width = img.naturalWidth || 160; canvas.height = img.naturalHeight || 160; ctx.drawImage(img,0,0,canvas.width,canvas.height);
+          return canvas.toDataURL('image/png');
+        }
+        canvas.width = srcCanvas.width; canvas.height = srcCanvas.height; ctx.drawImage(srcCanvas,0,0);
         return canvas.toDataURL('image/png');
       }
-      const tmp = document.createElement('div');
-      new window.QRCode(tmp, { text, width:160, height:160, correctLevel: window.QRCode.CorrectLevel ? window.QRCode.CorrectLevel.M : undefined });
-      await new Promise(r=>setTimeout(r,140));
-      let srcCanvas = tmp.querySelector('canvas');
-      if (!srcCanvas){
-        const img = tmp.querySelector('img'); if(!img) throw new Error('QR não gerado (fallback)');
-        canvas.width = img.naturalWidth || 160; canvas.height = img.naturalHeight || 160; ctx.drawImage(img,0,0,canvas.width,canvas.height);
-        return canvas.toDataURL('image/png');
-      }
-      canvas.width = srcCanvas.width; canvas.height = srcCanvas.height; ctx.drawImage(srcCanvas,0,0);
-      return canvas.toDataURL('image/png');
-    }
 
-    // ===== Elementos =====
-    const form=$('#atividade-form');
-    const linkInput=$('#q10-link');
-    const qrCanvas=$('#qrcode');
-    const urlHelp=$('#url-help');
-    const qrMsg=$('#qr-msg');
-    const downloadArea=$('#download-area');
-    const downloadLink=$('#download-link');
-    const downloadOpen=$('#download-open');
-    const submitBtn=$('#btn-enviar');
-    const shareBtn=$('#share-btn');
-    const copyPageBtn=$('#copy-page-link');
+      const form=$('#atividade-form');
+      const linkInput=$('#q10-link');
+      const qrCanvas=$('#qrcode');
+      const urlHelp=$('#url-help');
+      const qrMsg=$('#qr-msg');
+      const downloadArea=$('#download-area');
+      const downloadLink=$('#download-link');
+      const downloadOpen=$('#download-open');
+      const submitBtn=$('#btn-enviar');
+      const shareBtn=$('#share-btn');
+      const copyPageBtn=$('#copy-page-link');
 
-    let qrImageDataURL='';
-    let currentPdfUrl=null;
-    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+      let qrImageDataURL='';
+      let currentPdfUrl=null;
+      const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 
-    // ===== QR automático com mensagens claras =====
-    async function regenerateQR(){
-      qrImageDataURL=''; if (qrMsg){ qrMsg.classList.add('hidden'); qrMsg.textContent=''; }
-      const val=linkInput.value.trim();
-      if(!val){ urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=false; return; }
-      if(!isValidURL(val)){
-        urlHelp && urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=true; return;
-      }
-      urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); if(submitBtn) submitBtn.disabled=true;
-      const attempts = 3; let lastErr=null;
-      for (let i=0;i<attempts;i++){
-        try {
-          await ensureQRCode();
-          qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
-          if (qrImageDataURL){ if(submitBtn) submitBtn.disabled=false; return; }
-        } catch(e){ lastErr=e; await new Promise(r=>setTimeout(r, 200*(i+1))); }
-      }
-      console.error('Falha QR após tentativas:', lastErr);
-      if (qrMsg){ qrMsg.textContent='Falha ao gerar QR. Verifique o link e a conexão, depois tente novamente.'; qrMsg.classList.remove('hidden'); }
-      clearCanvas(qrCanvas);
-      if(submitBtn) submitBtn.disabled=false;
-    }
-
-    linkInput.addEventListener('input', regenerateQR);
-    linkInput.addEventListener('change', regenerateQR);
-    linkInput.addEventListener('blur', regenerateQR);
-    linkInput.addEventListener('paste', ()=> setTimeout(regenerateQR,0));
-    document.addEventListener('DOMContentLoaded', async ()=>{ if(linkInput.value.trim()) regenerateQR(); });
-
-    // ===== Envio -> PDF =====
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const urlVal=linkInput.value.trim();
-      if(!urlVal || !isValidURL(urlVal)){
-        urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); linkInput.focus();
-        return;
-      }
-      await regenerateQR();
-      if(!qrImageDataURL){
-        qrMsg.textContent = 'Não foi possível gerar o QR Code. Verifique o link e sua conexão e tente novamente.';
-        qrMsg.classList.remove('hidden');
-        linkInput.focus();
-        return;
+      async function regenerateQR(){
+        try{
+          qrImageDataURL=''; if (qrMsg){ qrMsg.classList.add('hidden'); qrMsg.textContent=''; }
+          const val=linkInput.value.trim();
+          if(!val){ urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=false; return; }
+          if(!isValidURL(val)){
+            urlHelp && urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); clearCanvas(qrCanvas); if(submitBtn) submitBtn.disabled=true; return;
+          }
+          urlHelp && urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); if(submitBtn) submitBtn.disabled=true;
+          const attempts = 3; let lastErr=null;
+          for (let i=0;i<attempts;i++){
+            try {
+              await ensureQRCode();
+              qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
+              if (qrImageDataURL){ if(submitBtn) submitBtn.disabled=false; return; }
+            } catch(e){ lastErr=e; await new Promise(r=>setTimeout(r, 200*(i+1))); }
+          }
+          console.error('Falha QR após tentativas:', lastErr);
+          if (qrMsg){ qrMsg.textContent='Falha ao gerar QR. Verifique o link e a conexão, depois tente novamente.'; qrMsg.classList.remove('hidden'); }
+          clearCanvas(qrCanvas);
+          if(submitBtn) submitBtn.disabled=false;
+        }catch(err){ console.error('Erro regenerateQR:', err); }
       }
 
-      const fd=new FormData(form); const data={}; fd.forEach((v,k)=>data[k]=v);
-      const fields=[
-        {key:'nome', label:'Nome'},
-        {key:'turma', label:'Turma'},
-        {key:'funcao', label:'Função'},
-        {key:'q1', label:'1) Quais são os coeficientes a, b e c?'},
-        {key:'q2', label:'2) A parábola abre para cima ou para baixo?'},
-        {key:'q3', label:'3) Qual é o valor do discriminante Delta?'},
-        {key:'q4', label:'4) A função possui raízes reais?'},
-        {key:'q5', label:'5) Quais são as raízes (se existirem)?'},
-        {key:'q6', label:'6) Qual é a abscissa do vértice?'},
-        {key:'q7', label:'7) Qual é a ordenada do vértice?'},
-        {key:'q8', label:'8) Qual é o valor de f(0)?'},
-        {key:'q9', label:'9) Quais são os pontos que interceptam com os eixos (x e y)?'},
-        {key:'q10-link', label:'10) Link do GeoGebra'}
-      ];
+      linkInput.addEventListener('input', regenerateQR);
+      linkInput.addEventListener('change', regenerateQR);
+      linkInput.addEventListener('blur', regenerateQR);
+      linkInput.addEventListener('paste', ()=> setTimeout(regenerateQR,0));
+      document.addEventListener('DOMContentLoaded', async ()=>{ if(linkInput.value && linkInput.value.trim()) regenerateQR(); });
 
-      const { jsPDF } = window.jspdf || {}; if(!jsPDF){ alert('Biblioteca de PDF (jsPDF) não carregou.'); return; }
-      const doc=new jsPDF({unit:'pt',format:'a4'});
-      const margin=48; let y=margin;
-
-      doc.setFont('helvetica','bold'); doc.setFontSize(16);
-      doc.text('Atividade – Funções Quadráticas e o GeoGebra', margin, y+12);
-      doc.setFont('helvetica','normal'); doc.setFontSize(11);
-      doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), 595-margin-120, y+12);
-      y+=60;
-
-      function writeField(label, value){
-        doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0);
-        doc.text(pdfSafe(label), margin, y); y+=14;
-        doc.setFont('helvetica','normal'); doc.setFontSize(11);
-        const lines = doc.splitTextToSize(pdfSafe((value||'—').toString()), 480);
-        doc.text(lines, margin, y);
-        y += lines.length*18 + 10; if(y>760){ doc.addPage(); y=60; }
-      }
-
-      for(const f of fields){ writeField(f.label, data[f.key] || ''); }
-
-      if(qrImageDataURL){ try{ doc.addImage(qrImageDataURL,'PNG',595-margin-120,y-16,120,120); }catch(e){ console.warn('QR no PDF:', e); } y+=120; }
-
-      doc.setFontSize(9); doc.setTextColor(120);
-      doc.text('Gerado automaticamente pelo formulário do Prof. Marcelo', margin, 820);
-
-      const filename = `atividade-funcao-quadratica-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
-      try{
-        const blob = doc.output('blob');
-        if(window.currentPdfUrl) { try{ URL.revokeObjectURL(window.currentPdfUrl); }catch(e){} }
-        window.currentPdfUrl = URL.createObjectURL(blob);
-        const downloadLink = document.getElementById('download-link');
-        downloadLink.href = window.currentPdfUrl; downloadLink.download = filename; downloadLink.textContent = filename;
-        document.getElementById('download-area').classList.remove('hidden');
-        const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-        if(isiOS){
-          window.open(window.currentPdfUrl, '_blank');
-        } else {
-          const a=document.createElement('a'); a.href=window.currentPdfUrl; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+      // ---- pdf helpers ----
+      function addPageIfNeeded(doc, y, extra, pageHeight, margin){
+        if (y.current + extra > pageHeight - margin){
+          doc.addPage();
+          y.current = margin;
         }
-      }catch(err){ console.error('Falha no download do PDF:', err); try{ doc.save(filename); }catch(e){} }
-    });
-
-    document.getElementById('download-open').addEventListener('click', ()=>{ if(window.currentPdfUrl) window.open(window.currentPdfUrl, '_blank'); });
-
-    document.getElementById('share-btn').addEventListener('click', async ()=>{
-      if(!window.currentPdfUrl) return;
-      try{
-        const res = await fetch(window.currentPdfUrl);
-        const blob = await res.blob();
-        const file = new File([blob], (document.getElementById('download-link').download || 'atividade.pdf'), { type: 'application/pdf' });
-        if(navigator.canShare && navigator.canShare({ files: [file] })){
-          await navigator.share({ files: [file], title: 'Atividade – PDF', text: 'Envio do PDF da atividade' });
-        } else if(navigator.share){
-          await navigator.share({ title: 'Atividade – PDF', url: window.currentPdfUrl });
-        } else {
-          alert('Compartilhamento nativo não suportado neste navegador. Use o botão Abrir e envie manualmente.');
-        }
-      } catch(e){
-        console.error('Compartilhar falhou', e);
-        alert('Não foi possível compartilhar o PDF. Tente abrir e enviar manualmente.');
       }
-    });
 
-    document.getElementById('copy-page-link').addEventListener('click', async ()=>{
-      try{
-        await navigator.clipboard.writeText(location.href);
-        const btn = document.getElementById('copy-page-link');
-        btn.textContent = 'Link copiado!'; setTimeout(()=> btn.textContent='Copiar link da página', 2000);
-      }catch{ alert('Não foi possível copiar. Copie manualmente o endereço da barra do navegador.'); }
-    });
+      function writeField(doc, label, value, opts, layout){
+        const { margin, usable, pageHeight } = layout;
+        const y = layout.y;
+
+        const isLink = !!opts.link;
+
+        doc.setFont('helvetica','bold'); 
+        doc.setFontSize(12); 
+        doc.setTextColor(0);
+
+        const labelLines = doc.splitTextToSize(pdfSafe(label), usable);
+        for (const ln of labelLines){ 
+          addPageIfNeeded(doc, y, 14, pageHeight, margin); 
+          doc.text(ln, margin, y.current); 
+          y.current += 14; 
+        }
+
+        const raw = (value ?? '—').toString().trim();
+
+        if (!isLink) {
+          doc.setFont('helvetica','normal'); 
+          doc.setFontSize(11); 
+          doc.setTextColor(0);
+          const valueLines = doc.splitTextToSize(pdfSafe(raw), usable);
+          for (const ln of valueLines){ 
+            addPageIfNeeded(doc, y, 18, pageHeight, margin); 
+            doc.text(ln, margin, y.current); 
+            y.current += 18; 
+          }
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+          return;
+        }
+
+        // Render como link clicável (azul + sublinhado) com anotação PDF
+        const url = raw;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(11);
+        doc.setTextColor(0, 102, 204); // azul link
+
+        const linkLines = doc.splitTextToSize(url, usable);
+
+        if (typeof doc.textWithLink === 'function' && linkLines.length === 1){
+          addPageIfNeeded(doc, y, 14, pageHeight, margin);
+          doc.textWithLink(linkLines[0], margin, y.current, { url });
+          const w = doc.getTextWidth(linkLines[0]);
+          doc.setDrawColor(0,102,204);
+          doc.line(margin, y.current+2, margin + w, y.current+2);
+          y.current += 18; 
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+        } else {
+          // Múltiplas linhas: cria anotação por linha
+          doc.setDrawColor(0,102,204);
+          for (const ln of linkLines){
+            addPageIfNeeded(doc, y, 14, pageHeight, margin);
+            doc.text(ln, margin, y.current);
+            const w = doc.getTextWidth(ln);
+            doc.line(margin, y.current+2, margin + w, y.current+2); // sublinhado
+            // anotação (x, y-8, w, 12) cobre a linha
+            doc.link(margin, y.current-8, w, 12, { url });
+            y.current += 18;
+          }
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+        }
+
+        // reset cor
+        doc.setTextColor(0);
+      }
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        try{
+          const urlVal=linkInput.value.trim();
+          if(!urlVal || !isValidURL(urlVal)){
+            urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); linkInput.focus();
+            return;
+          }
+          await regenerateQR();
+          if(!qrImageDataURL){
+            qrMsg.textContent = 'Não foi possível gerar o QR Code. Verifique o link e sua conexão e tente novamente.';
+            qrMsg.classList.remove('hidden');
+            linkInput.focus();
+            return;
+          }
+
+          const fd=new FormData(form); const data={}; fd.forEach((v,k)=>data[k]=v);
+
+          // Campos (com flag link no último)
+          const fields = [
+            {key:'nome', label:'Nome'},
+            {key:'turma', label:'Turma'},
+            {key:'funcao', label:'1) Escreva a equação modular da questão - 01 (a):'},
+            {key:'q1', label:'2) Escreva a equação modular da questão - 01 (b):'},
+            {key:'q2', label:'3) Escreva a equação modular da questão - 01 (c):'},
+            {key:'q3', label:'4) Qual a solução da equação do item a:'},
+            {key:'q4', label:'5) Qual a solução da equação do item b:'},
+            {key:'q5', label:'6) Qual a solução da equação do item c:'},
+            {key:'q10-link', label:'7) Link do GeoGebra', link:true}
+          ];
+
+          const { jsPDF } = window.jspdf || {}; 
+          if(!jsPDF){ alert('Biblioteca de PDF (jsPDF) não carregou.'); return; }
+
+          const doc=new jsPDF({unit:'pt',format:'a4'});
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
+          const margin=48; 
+          const usable = pageWidth - 2*margin; 
+          const y = { current: margin };
+          doc.setLineHeightFactor(1.2);
+
+          // Cabeçalho
+          doc.setFont('helvetica','bold'); doc.setFontSize(16);
+          doc.text('Atividade – Funções Modulares e o GeoGebra', margin, y.current+12, { maxWidth: usable });
+          doc.setFont('helvetica','normal'); doc.setFontSize(11);
+          doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), pageWidth - margin - 120, y.current+12);
+          y.current += 60;
+
+          const layout = { margin, usable, pageHeight, y };
+
+          // Conteúdo
+          for(const f of fields){
+            writeField(doc, f.label, data[f.key] || '', { link: !!f.link }, layout);
+          }
+
+          // QR no PDF
+          if(qrImageDataURL){ 
+            try{ 
+              const qrW = 120, qrH = 120;
+              if (y.current + qrH > pageHeight - margin) { doc.addPage(); y.current = margin; }
+              doc.addImage(qrImageDataURL,'PNG',pageWidth - margin - qrW, y.current-16, qrW, qrH); 
+              y.current += qrH;
+            }catch(e){ console.warn('QR no PDF:', e); } 
+          }
+
+          // Rodapé
+          doc.setFontSize(9); doc.setTextColor(120);
+          if (y.current + 20 > pageHeight - margin){ doc.addPage(); y.current = margin; }
+          doc.text('Gerado automaticamente pelo formulário do Prof. Marcelo', margin, pageHeight - margin/2);
+
+          const filename = `atividade-funcao-modular-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
+
+          // Download/abertura
+          try{
+            const blob = doc.output('blob');
+            if(currentPdfUrl) { try{ URL.revokeObjectURL(currentPdfUrl); }catch(e){} }
+            currentPdfUrl = URL.createObjectURL(blob);
+            downloadLink.href = currentPdfUrl; 
+            downloadLink.target = "_blank";
+            downloadLink.rel = "noopener";
+            downloadLink.download = filename; 
+            downloadLink.textContent = filename;
+            downloadArea.classList.remove('hidden');
+
+            if(isiOS){
+              window.open(currentPdfUrl, '_blank');
+            } else {
+              const a=document.createElement('a'); 
+              a.href=currentPdfUrl; 
+              a.target="_blank";
+              a.rel="noopener";
+              a.download=filename; 
+              document.body.appendChild(a); 
+              a.click(); 
+              a.remove();
+            }
+          }catch(err){ 
+            console.error('Falha no download do PDF:', err); 
+            try{ doc.save(filename); }catch(e){} 
+          }
+        }catch(err){
+          console.error('Erro no submit:', err);
+        }
+      });
+
+      downloadOpen.addEventListener('click', ()=>{ if(currentPdfUrl) window.open(currentPdfUrl, '_blank'); });
+
+      shareBtn.addEventListener('click', async ()=>{
+        if(!currentPdfUrl) return;
+        try{
+          const res = await fetch(currentPdfUrl);
+          const blob = await res.blob();
+          const file = new File([blob], (downloadLink.download || 'atividade.pdf'), { type: 'application/pdf' });
+          if(navigator.canShare && navigator.canShare({ files: [file] })){
+            await navigator.share({ files: [file], title: 'Atividade – PDF', text: 'Envio do PDF da atividade' });
+          } else if(navigator.share){
+            await navigator.share({ title: 'Atividade – PDF', url: currentPdfUrl });
+          } else {
+            alert('Compartilhamento nativo não suportado neste navegador. Use o botão Abrir e envie manualmente.');
+          }
+        } catch(e){
+          console.error('Compartilhar falhou', e);
+          alert('Não foi possível compartilhar o PDF. Tente abrir e enviar manualmente.');
+        }
+      });
+
+      copyPageBtn.addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(location.href);
+          copyPageBtn.textContent = 'Link copiado!'; 
+          setTimeout(()=> copyPageBtn.textContent='Copiar link da página', 2000);
+        }catch{ 
+          alert('Não foi possível copiar. Copie manualmente o endereço da barra do navegador.'); 
+        }
+      });
+
+    }catch(err){
+      console.error('Erro global:', err);
+    }
+  })();
   </script>
 </body>
 </html>
