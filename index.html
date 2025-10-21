@@ -31,7 +31,8 @@
         <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções Modulares</h1>
         <p class="text-sm text-slate-600">Prof.: Marcelo P. Antônio</p>
       </div>
-      <span class="badge bg-indigo-50 text-indigo-700">GeoGebra</span>
+      <!-- Badge trocado para MPA -->
+      <span class="badge bg-indigo-50 text-indigo-700">MPA</span>
     </header>
 
     <form id="atividade-form" class="space-y-6 bg-white p-6 rounded-xl card" novalidate>
@@ -232,7 +233,7 @@
         lpHost.textContent = host;
         lpOpen.href = val;
 
-        // Tentar obter um título curto (pode falhar por CORS)
+        // Tenta obter título curto (pode falhar por CORS)
         let title = '';
         try{
           const res = await fetch(val, { method:'GET', mode:'cors' });
@@ -242,9 +243,8 @@
             title = (doc.querySelector('meta[property="og:title"]')?.content
                   || doc.querySelector('title')?.textContent || '').trim();
           }
-        }catch(_){ /* CORS pode bloquear. Tudo bem. */ }
+        }catch(_){ /* CORS pode bloquear. Sem drama. */ }
         if(!title){
-          // fallback: última parte do path ou domínio
           const path = u.pathname.split('/').filter(Boolean);
           title = (path[path.length-1] || host).replace(/[-_]/g,' ').slice(0,80);
         }
@@ -384,12 +384,48 @@
           const y = { current: margin };
           doc.setLineHeightFactor(1.2);
 
-          // Cabeçalho elegante
+          // ================== Cabeçalho com selo da turma ==================
+          // Título
           doc.setFont('helvetica','bold'); doc.setFontSize(16);
           doc.text('Atividade – Funções Modulares e o GeoGebra', margin, y.current+12, { maxWidth: usable });
+
+          // Selo da turma (capsula no canto superior direito)
+          const turmaRaw = (data.turma || '').toString().trim();
+          const turma = turmaRaw ? turmaRaw.toUpperCase() : 'TURMA';
+          const ano = new Date().getFullYear();
+          const seloTxt = `${turma} • ${ano}`;
+
+          // Estilo do selo
+          doc.setFont('helvetica','bold'); 
+          doc.setFontSize(10);
+          const padX = 10;          // padding horizontal
+          const padY = 6;           // padding vertical
+          const textW = doc.getTextWidth(seloTxt);
+          const seloW = textW + padX*2;
+          const seloH = 18;         // altura fixa confortável
+          const seloX = pageWidth - margin - seloW;
+          const seloY = y.current;  // alinhado à linha do cabeçalho
+
+          // Cápsula arredondada preenchida
+          doc.setFillColor(231, 234, 247);   // indigo-50 aproximado
+          doc.setDrawColor(199, 210, 254);   // indigo-200 aproximado
+          if (typeof doc.roundedRect === 'function') {
+            doc.roundedRect(seloX, seloY, seloW, seloH, 6, 6, 'FD');
+          } else {
+            doc.rect(seloX, seloY, seloW, seloH, 'FD');
+          }
+
+          // Texto do selo
+          doc.setTextColor(67, 56, 202); // indigo-700 aproximado
+          doc.text(seloTxt, seloX + seloW/2, seloY + seloH/2 + 3, { align: 'center' });
+
+          // Data (sob o selo)
           doc.setFont('helvetica','normal'); doc.setFontSize(11);
-          doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), pageWidth - margin - 120, y.current+12);
+          doc.setTextColor(0);
+          doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), seloX, seloY + seloH + 16);
+
           y.current += 60;
+          // ================================================================
 
           const layout = { margin, usable, pageHeight, y };
 
