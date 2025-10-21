@@ -19,7 +19,6 @@
   <style>
     .error { border-color: #ef4444 !important; }
     button:disabled { opacity:.6; cursor:not-allowed; }
-    /* micro-detalhes visuais */
     .card { border:1px solid rgb(226 232 240); box-shadow: 0 6px 20px rgba(2,6,23,.06); }
     .badge { font-size:.75rem; padding:.125rem .5rem; border-radius:9999px; border:1px solid rgba(2,6,23,.1);}
   </style>
@@ -31,7 +30,6 @@
         <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções Modulares</h1>
         <p class="text-sm text-slate-600">Prof.: Marcelo P. Antônio</p>
       </div>
-      <!-- Badge trocado para MPA -->
       <span class="badge bg-indigo-50 text-indigo-700">MPA</span>
     </header>
 
@@ -54,23 +52,23 @@
         </div>
         <div>
           <label class="block text-sm font-medium">2) Equação modular — 01 (b):</label>
-          <input type="text" name="q1" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
+          <input type="text" name="q1" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
         </div>
         <div>
           <label class="block text-sm font-medium">3) Equação modular — 01 (c):</label>
-          <input type="text" name="q2" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
+          <input type="text" name="q2" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
         </div>
         <div>
           <label class="block text-sm font-medium">4) Solução do item (a):</label>
-          <input type="text" name="q3" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
+          <input type="text" name="q3" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
         </div>
         <div>
           <label class="block text-sm font-medium">5) Solução do item (b):</label>
-          <input type="text" name="q4" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
+          <input type="text" name="q4" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
         </div>
         <div>
           <label class="block text-sm font-medium">6) Solução do item (c):</label>
-          <input type="text" name="q5" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
+          <input type="text" name="q5" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
         </div>
       </div>
 
@@ -79,7 +77,7 @@
         <input id="q10-link" type="url" name="q10-link" placeholder="https://..." required class="w-full border border-slate-300 px-3 py-2 rounded-md mb-1" />
         <p id="url-help" class="text-xs text-rose-600 hidden">Insira uma URL válida (http:// ou https://)</p>
 
-        <!-- Prévia do link (bonita e útil) -->
+        <!-- Prévia do link -->
         <div id="link-preview" class="mt-3 hidden">
           <div class="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50/60">
             <img id="lp-fav" alt="" class="w-6 h-6 rounded-sm border border-slate-200 bg-white">
@@ -104,7 +102,7 @@
       </div>
 
       <div class="pt-2 flex flex-wrap gap-3 justify-end">
-        <button id="btn-enviar" type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Gerar PDF</button>
+        <button id="btn-enviar" type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" disabled>Gerar PDF</button>
         <button type="reset" class="px-4 py-2 bg-gray-100 text-slate-700 rounded-lg hover:bg-gray-200">Limpar</button>
       </div>
     </form>
@@ -119,7 +117,7 @@
       </div>
     </div>
 
-    <p class="text-[11px] text-slate-400 mt-4">Dica: teste o PDF no Adobe Reader ou no viewer nativo do navegador para garantir que o link esteja clicável.</p>
+    <p class="text-[11px] text-slate-400 mt-4">Dica: todos os campos são obrigatórios. O botão ativa quando o link é válido e o QR é gerado.</p>
   </div>
 
   <script defer>
@@ -219,7 +217,18 @@
       let currentPdfUrl=null;
       const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 
-      // ---------- Link Preview bonito ----------
+      // ---------- helper para habilitar/desabilitar o botão ----------
+      function formIsValidBasic(){
+        return form.checkValidity(); // valida todos os required nativos
+      }
+      function updateSubmitState(){
+        const urlVal = linkInput.value.trim();
+        const urlOk = isValidURL(urlVal);
+        // precisa: todos obrigatórios válidos + url válida + QR pronto
+        submitBtn.disabled = !(formIsValidBasic() && urlOk && !!qrImageDataURL);
+      }
+
+      // ---------- Link Preview ----------
       async function updateLinkPreview(){
         const val = linkInput.value.trim();
         if(!val || !isValidURL(val)){
@@ -233,7 +242,6 @@
         lpHost.textContent = host;
         lpOpen.href = val;
 
-        // Tenta obter título curto (pode falhar por CORS)
         let title = '';
         try{
           const res = await fetch(val, { method:'GET', mode:'cors' });
@@ -243,7 +251,7 @@
             title = (doc.querySelector('meta[property="og:title"]')?.content
                   || doc.querySelector('title')?.textContent || '').trim();
           }
-        }catch(_){ /* CORS pode bloquear. Sem drama. */ }
+        }catch(_){}
         if(!title){
           const path = u.pathname.split('/').filter(Boolean);
           title = (path[path.length-1] || host).replace(/[-_]/g,' ').slice(0,80);
@@ -263,35 +271,50 @@
 
           if(!val){
             urlHelp.classList.add('hidden'); linkInput.classList.remove('error');
-            clearCanvas(qrCanvas); submitBtn.disabled=false; return;
+            clearCanvas(qrCanvas); updateSubmitState(); return;
           }
           if(!isValidURL(val)){
             urlHelp.classList.remove('hidden'); linkInput.classList.add('error');
-            clearCanvas(qrCanvas); submitBtn.disabled=true; return;
+            clearCanvas(qrCanvas); updateSubmitState(); return;
           }
-          urlHelp.classList.add('hidden'); linkInput.classList.remove('error'); submitBtn.disabled=true;
+          urlHelp.classList.add('hidden'); linkInput.classList.remove('error');
+          updateSubmitState(); // desabilita enquanto não terminar o QR
 
           const attempts = 3; let lastErr=null;
           for (let i=0;i<attempts;i++){
             try {
               await ensureQRCode();
               qrImageDataURL = await drawQRToCanvas(qrCanvas, val);
-              if (qrImageDataURL){ submitBtn.disabled=false; return; }
+              if (qrImageDataURL){ updateSubmitState(); return; }
             } catch(e){ lastErr=e; await new Promise(r=>setTimeout(r, 200*(i+1))); }
           }
           console.error('Falha QR após tentativas:', lastErr);
           qrMsg.textContent='Falha ao gerar QR. Verifique o link e a conexão, depois tente novamente.';
           qrMsg.classList.remove('hidden');
           clearCanvas(qrCanvas);
-          submitBtn.disabled=false;
+          updateSubmitState();
         }catch(err){ console.error('Erro regenerateQR:', err); }
       }
+
+      // Eventos de input para revalidar
+      const allInputs = Array.from(form.querySelectorAll('input'));
+      allInputs.forEach(inp=>{
+        inp.addEventListener('input', ()=>{ 
+          // remove borda de erro quando o usuário digita
+          if (inp.checkValidity()) inp.classList.remove('error');
+          updateSubmitState();
+        });
+        inp.addEventListener('blur', ()=>{ if(!inp.checkValidity()) inp.classList.add('error'); updateSubmitState(); });
+      });
 
       linkInput.addEventListener('input', regenerateQR);
       linkInput.addEventListener('change', regenerateQR);
       linkInput.addEventListener('blur', regenerateQR);
       linkInput.addEventListener('paste', ()=> setTimeout(regenerateQR,0));
-      document.addEventListener('DOMContentLoaded', async ()=>{ if(linkInput.value && linkInput.value.trim()) regenerateQR(); });
+      document.addEventListener('DOMContentLoaded', async ()=>{
+        updateSubmitState();
+        if(linkInput.value && linkInput.value.trim()) regenerateQR();
+      });
 
       // ---------- Helpers PDF ----------
       function addPageIfNeeded(doc, y, extra, pageHeight, margin){
@@ -323,10 +346,8 @@
           return;
         }
 
-        // Link curto (clicável) + URL em cinza abaixo (opcional)
+        // Link curto
         const url = raw;
-
-        // Linha do link (azul + sublinhado)
         doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(0,102,204);
         const shortText = linkLabel;
         addPageIfNeeded(doc, y, 14, pageHeight, margin);
@@ -337,13 +358,11 @@
           const w = doc.getTextWidth(shortText);
           doc.link(margin, y.current-8, w, 12, { url });
         }
-        // Sublinha
         const wline = doc.getTextWidth(shortText);
         doc.setDrawColor(0,102,204);
         doc.line(margin, y.current+2, margin + wline, y.current+2);
         y.current += 16;
 
-        // URL cinza pequena (auditoria)
         if (showUrlBelow){
           doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120);
           const urlLines = doc.splitTextToSize(url, usable);
@@ -357,10 +376,18 @@
       // ---------- Submit ----------
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
+
+        // Garante que todos required estão OK (mensagens nativas)
+        if (!form.reportValidity()){
+          updateSubmitState();
+          return;
+        }
+
         try{
           const urlVal=linkInput.value.trim();
           if(!urlVal || !isValidURL(urlVal)){
             urlHelp.classList.remove('hidden'); linkInput.classList.add('error'); linkInput.focus();
+            updateSubmitState();
             return;
           }
           await regenerateQR();
@@ -368,6 +395,7 @@
             qrMsg.textContent = 'Não foi possível gerar o QR Code. Verifique o link e sua conexão e tente novamente.';
             qrMsg.classList.remove('hidden');
             linkInput.focus();
+            updateSubmitState();
             return;
           }
 
@@ -384,48 +412,39 @@
           const y = { current: margin };
           doc.setLineHeightFactor(1.2);
 
-          // ================== Cabeçalho com selo da turma ==================
-          // Título
+          // Cabeçalho com selo
           doc.setFont('helvetica','bold'); doc.setFontSize(16);
           doc.text('Atividade – Funções Modulares e o GeoGebra', margin, y.current+12, { maxWidth: usable });
 
-          // Selo da turma (capsula no canto superior direito)
           const turmaRaw = (data.turma || '').toString().trim();
           const turma = turmaRaw ? turmaRaw.toUpperCase() : 'TURMA';
           const ano = new Date().getFullYear();
           const seloTxt = `${turma} • ${ano}`;
 
-          // Estilo do selo
           doc.setFont('helvetica','bold'); 
           doc.setFontSize(10);
-          const padX = 10;          // padding horizontal
-          const padY = 6;           // padding vertical
+          const padX = 10, padY = 6;
           const textW = doc.getTextWidth(seloTxt);
           const seloW = textW + padX*2;
-          const seloH = 18;         // altura fixa confortável
+          const seloH = 18;
           const seloX = pageWidth - margin - seloW;
-          const seloY = y.current;  // alinhado à linha do cabeçalho
+          const seloY = y.current;
 
-          // Cápsula arredondada preenchida
-          doc.setFillColor(231, 234, 247);   // indigo-50 aproximado
-          doc.setDrawColor(199, 210, 254);   // indigo-200 aproximado
+          doc.setFillColor(231, 234, 247);
+          doc.setDrawColor(199, 210, 254);
           if (typeof doc.roundedRect === 'function') {
             doc.roundedRect(seloX, seloY, seloW, seloH, 6, 6, 'FD');
           } else {
             doc.rect(seloX, seloY, seloW, seloH, 'FD');
           }
-
-          // Texto do selo
-          doc.setTextColor(67, 56, 202); // indigo-700 aproximado
+          doc.setTextColor(67, 56, 202);
           doc.text(seloTxt, seloX + seloW/2, seloY + seloH/2 + 3, { align: 'center' });
 
-          // Data (sob o selo)
           doc.setFont('helvetica','normal'); doc.setFontSize(11);
           doc.setTextColor(0);
           doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), seloX, seloY + seloH + 16);
 
           y.current += 60;
-          // ================================================================
 
           const layout = { margin, usable, pageHeight, y };
 
@@ -441,12 +460,10 @@
             {key:'q10-link', label:'7) Link do GeoGebra', link:true, linkLabel:'Abrir atividade no GeoGebra', showUrlBelow:true }
           ];
 
-          // Conteúdo
           for(const f of fields){
             writeField(doc, f.label, data[f.key] || '', { link: !!f.link, linkLabel: f.linkLabel, showUrlBelow: f.showUrlBelow }, layout);
           }
 
-          // QR no PDF
           if(qrImageDataURL){ 
             try{ 
               const qrW = 120, qrH = 120;
@@ -456,14 +473,12 @@
             }catch(e){ console.warn('QR no PDF:', e); } 
           }
 
-          // Rodapé
           doc.setFontSize(9); doc.setTextColor(120);
           if (y.current + 20 > pageHeight - margin){ doc.addPage(); y.current = margin; }
           doc.text('Gerado automaticamente pelo formulário do Prof. Marcelo', margin, pageHeight - margin/2);
 
           const filename = `atividade-funcao-modular-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
 
-          // Download/abertura
           try{
             const blob = doc.output('blob');
             if(currentPdfUrl) { try{ URL.revokeObjectURL(currentPdfUrl); }catch(e){} }
@@ -496,7 +511,7 @@
         }
       });
 
-      // ---------- Ações pós-PDF ----------
+      // ---------- Pós-PDF ----------
       downloadOpen.addEventListener('click', ()=>{ if(currentPdfUrl) window.open(currentPdfUrl, '_blank'); });
       shareBtn.addEventListener('click', async ()=>{
         if(!currentPdfUrl) return;
@@ -509,7 +524,7 @@
           } else if(navigator.share){
             await navigator.share({ title: 'Atividade – PDF', url: currentPdfUrl });
           } else {
-            alert('Compartilhamento nativo não suportado neste navegador. Use o botão Abrir e envie manualmente.');
+            alert('Compartilhamento não suportado neste navegador. Use o botão Abrir e envie manualmente.');
           }
         } catch(e){
           console.error('Compartilhar falhou', e);
