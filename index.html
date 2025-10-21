@@ -3,24 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Atividade - 02: Função com mais de uma Sentença e o GeoGebra</title>
+  <title>Atividade - GeoGebra: Função Modular</title>
 
-  <!-- ⚠️ Mantemos sua aparência original:
-       1) Tailwind SEM 'preflight' para não resetar seu CSS base
-       2) Carregado SEM 'defer' para evitar FOUC -->
+  <!-- Mantém aparência original: Tailwind sem preflight -->
   <script>
     window.tailwind = window.tailwind || {};
     tailwind.config = { corePlugins: { preflight: false } };
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Lib moderna de QR + fallback -->
+  <!-- QRCode + jsPDF -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
-  <!-- jsPDF para gerar PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 
   <style>
-    /* Seu CSS original preservado */
     .error { border-color: #ef4444 !important; }
     button:disabled { opacity:.6; cursor:not-allowed; }
   </style>
@@ -28,7 +24,7 @@
 <body class="bg-slate-50 text-slate-800">
   <div class="max-w-3xl mx-auto p-6">
     <header class="mb-6 border-b border-slate-200 pb-4">
-      <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções com mais de uma sentença e o GeoGebra</h1>
+      <h1 class="text-2xl font-bold text-indigo-700">Atividade de Matemática – Funções Modulares</h1>
       <p class="text-sm text-slate-600">Prof.: Marcelo P. Antônio</p>
     </header>
 
@@ -42,48 +38,32 @@
         <input type="text" name="turma" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
       </div>
       <div>
-        <label class="block text-sm font-medium">Escreva a função da questão - 05:</label>
+        <label class="block text-sm font-medium">1) Escreva a equação modular da questão - 01 (a):</label>
         <input type="text" name="funcao" class="w-full border border-slate-300 px-3 py-2 rounded-md" required />
       </div>
       <div>
-        <label class="block text-sm font-medium">1) Quantas sentenças a função tem?</label>
+        <label class="block text-sm font-medium">2) Escreva a equação modular da questão - 01 (b):</label>
         <input type="text" name="q1" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">2) Quais são elas?</label>
+        <label class="block text-sm font-medium">3) Escreva a equação modular da questão - 01 (c):</label>
         <input type="text" name="q2" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">3) Qual o intervalo da primeira sentença?</label>
+        <label class="block text-sm font-medium">4) Qual a solução do item a?</label>
         <input type="text" name="q3" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">4) Qual o intervalo da segunda sentença?</label>
+        <label class="block text-sm font-medium">5) Qual a solução do item b?</label>
         <input type="text" name="q4" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
       <div>
-        <label class="block text-sm font-medium">5) Qual o intervalo da terceira sentença?</label>
+        <label class="block text-sm font-medium">6) Qual a solução do item c?</label>
         <input type="text" name="q5" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">6) Que tipo de função essas sentenças são?</label>
-        <input type="text" name="q6" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">7) Qual é o intervalo minímo e máximo da função da questão 5?</label>
-        <input type="text" name="q7" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">8) Quais são os valores de f(2)?</label>
-        <input type="text" name="q8" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium">9) Descreva com poucas palavras, os passos que você fez para construir o gráfico da função da questão 5, usando o geogebra?</label>
-        <input type="text" name="q9" class="w-full border border-slate-300 px-3 py-2 rounded-md" />
       </div>
 
       <div>
-        <label class="block text-sm font-medium">10) Link da sua atividade no GeoGebra:</label>
+        <label class="block text-sm font-medium">7) Link da sua atividade realizada no GeoGebra:</label>
         <input id="q10-link" type="url" name="q10-link" placeholder="https://..." required class="w-full border border-slate-300 px-3 py-2 rounded-md mb-1" />
         <p id="url-help" class="text-xs text-rose-600 hidden">Insira uma URL válida (http:// ou https://)</p>
         <canvas id="qrcode" width="160" height="160" class="border rounded-md bg-white"></canvas>
@@ -106,7 +86,7 @@
       </div>
     </div>
 
-    <!-- Nota: links blob são locais ao navegador; use "Compartilhar" para enviar o arquivo para outros apps/dispositivos. -->
+    <!-- Observação: links blob são locais ao navegador. Use "Compartilhar" para enviar a outros apps/dispositivos. -->
   </div>
 
   <script defer>
@@ -115,7 +95,16 @@
       const $ = (s)=>document.querySelector(s);
       function isValidURL(str){ try{ const u=new URL(str); return ['http:','https:'].includes(u.protocol);}catch{return false;} }
       function clearCanvas(c){ const ctx=c.getContext('2d'); if(ctx) ctx.clearRect(0,0,c.width,c.height); }
-      function loadScript(src, timeoutMs=6000){ return new Promise((res)=>{ const s=document.createElement('script'); let done=false; const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); s.src=src; s.crossOrigin='anonymous'; s.referrerPolicy='no-referrer'; s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; document.head.appendChild(s); }); }
+      function loadScript(src, timeoutMs=6000){ 
+        return new Promise((res)=>{ 
+          const s=document.createElement('script'); let done=false; 
+          const t=setTimeout(()=>{ if(done) return; done=true; console.warn('Timeout carregando', src); res(false); }, timeoutMs); 
+          s.src=src; s.crossOrigin='anonymous'; s.referrerPolicy='no-referrer'; 
+          s.onload=()=>{ if(done) return; done=true; clearTimeout(t); res(true); }; 
+          s.onerror=()=>{ if(done) return; done=true; clearTimeout(t); res(false); }; 
+          document.head.appendChild(s); 
+        }); 
+      }
       function pdfSafe(str){ return (str||'').replace(/Δ/g,'Delta'); }
       function sanitizeFilename(str){ return (str||'').normalize('NFD').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-').toLowerCase(); }
 
@@ -219,6 +208,85 @@
       linkInput.addEventListener('paste', ()=> setTimeout(regenerateQR,0));
       document.addEventListener('DOMContentLoaded', async ()=>{ if(linkInput.value && linkInput.value.trim()) regenerateQR(); });
 
+      // ---- pdf helpers ----
+      function addPageIfNeeded(doc, y, extra, pageHeight, margin){
+        if (y.current + extra > pageHeight - margin){
+          doc.addPage();
+          y.current = margin;
+        }
+      }
+
+      function writeField(doc, label, value, opts, layout){
+        const { margin, usable, pageHeight } = layout;
+        const y = layout.y;
+
+        const isLink = !!opts.link;
+
+        doc.setFont('helvetica','bold'); 
+        doc.setFontSize(12); 
+        doc.setTextColor(0);
+
+        const labelLines = doc.splitTextToSize(pdfSafe(label), usable);
+        for (const ln of labelLines){ 
+          addPageIfNeeded(doc, y, 14, pageHeight, margin); 
+          doc.text(ln, margin, y.current); 
+          y.current += 14; 
+        }
+
+        const raw = (value ?? '—').toString().trim();
+
+        if (!isLink) {
+          doc.setFont('helvetica','normal'); 
+          doc.setFontSize(11); 
+          doc.setTextColor(0);
+          const valueLines = doc.splitTextToSize(pdfSafe(raw), usable);
+          for (const ln of valueLines){ 
+            addPageIfNeeded(doc, y, 18, pageHeight, margin); 
+            doc.text(ln, margin, y.current); 
+            y.current += 18; 
+          }
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+          return;
+        }
+
+        // Render como link clicável (azul + sublinhado) com anotação PDF
+        const url = raw;
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(11);
+        doc.setTextColor(0, 102, 204); // azul link
+
+        const linkLines = doc.splitTextToSize(url, usable);
+
+        if (typeof doc.textWithLink === 'function' && linkLines.length === 1){
+          addPageIfNeeded(doc, y, 14, pageHeight, margin);
+          doc.textWithLink(linkLines[0], margin, y.current, { url });
+          const w = doc.getTextWidth(linkLines[0]);
+          doc.setDrawColor(0,102,204);
+          doc.line(margin, y.current+2, margin + w, y.current+2);
+          y.current += 18; 
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+        } else {
+          // Múltiplas linhas: cria anotação por linha
+          doc.setDrawColor(0,102,204);
+          for (const ln of linkLines){
+            addPageIfNeeded(doc, y, 14, pageHeight, margin);
+            doc.text(ln, margin, y.current);
+            const w = doc.getTextWidth(ln);
+            doc.line(margin, y.current+2, margin + w, y.current+2); // sublinhado
+            // anotação (x, y-8, w, 12) cobre a linha
+            doc.link(margin, y.current-8, w, 12, { url });
+            y.current += 18;
+          }
+          y.current += 6; 
+          addPageIfNeeded(doc, y, 0, pageHeight, margin);
+        }
+
+        // reset cor
+        doc.setTextColor(0);
+      }
+
       form.addEventListener('submit', async (e)=>{
         e.preventDefault();
         try{
@@ -236,73 +304,63 @@
           }
 
           const fd=new FormData(form); const data={}; fd.forEach((v,k)=>data[k]=v);
-          const fields=[
+
+          // Campos (com flag link no último)
+          const fields = [
             {key:'nome', label:'Nome'},
             {key:'turma', label:'Turma'},
-            {key:'funcao', label:'Escreva a função da questão - 05'},
-            {key:'q1', label:'1) Quantas sentenças a função tem?'},
-            {key:'q2', label:'2) Quais são elas?'},
-            {key:'q3', label:'3) Qual o intervalo da primeira sentença?'},
-            {key:'q4', label:'4) Qual o intervalo da segunda sentença?'},
-            {key:'q5', label:'5) Qual o intervalo da terceira sentença?'},
-            {key:'q6', label:'6) Que tipo de função essas sentenças são?'},
-            {key:'q7', label:'7) Qual é o intervalo minímo e máximo da função da questão 5?'},
-            {key:'q8', label:'8) Quais são os valores de f(2)?'},
-            {key:'q9', label:'9) Descreva com poucas palavras, os passos que você fez para construir o gráfico da função da questão 5, usando o geogebra?'},
-            {key:'q10-link', label:'10) Link do GeoGebra'}
+            {key:'funcao', label:'1) Escreva a equação modular da questão - 01 (a):'},
+            {key:'q1', label:'2) Escreva a equação modular da questão - 01 (b):'},
+            {key:'q2', label:'3) Escreva a equação modular da questão - 01 (c):'},
+            {key:'q3', label:'4) Qual a solução da equação do item a:'},
+            {key:'q4', label:'5) Qual a solução da equação do item b:'},
+            {key:'q5', label:'6) Qual a solução da equação do item c:'},
+            {key:'q10-link', label:'7) Link do GeoGebra', link:true}
           ];
 
-          const { jsPDF } = window.jspdf || {}; if(!jsPDF){ alert('Biblioteca de PDF (jsPDF) não carregou.'); return; }
+          const { jsPDF } = window.jspdf || {}; 
+          if(!jsPDF){ alert('Biblioteca de PDF (jsPDF) não carregou.'); return; }
+
           const doc=new jsPDF({unit:'pt',format:'a4'});
           const pageWidth = doc.internal.pageSize.getWidth();
           const pageHeight = doc.internal.pageSize.getHeight();
           const margin=48; 
           const usable = pageWidth - 2*margin; 
-          let y=margin;
+          const y = { current: margin };
           doc.setLineHeightFactor(1.2);
 
+          // Cabeçalho
           doc.setFont('helvetica','bold'); doc.setFontSize(16);
-          doc.text('Atividade – Funções por partes e o GeoGebra', margin, y+12, { maxWidth: usable });
+          doc.text('Atividade – Funções Modulares e o GeoGebra', margin, y.current+12, { maxWidth: usable });
           doc.setFont('helvetica','normal'); doc.setFontSize(11);
-          doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), pageWidth - margin - 120, y+12);
-          y+=60;
+          doc.text('Data: '+new Date().toLocaleDateString('pt-BR'), pageWidth - margin - 120, y.current+12);
+          y.current += 60;
 
-          function addPageIfNeeded(extra=0){
-            if (y + extra > pageHeight - margin){
-              doc.addPage();
-              y = margin;
-            }
+          const layout = { margin, usable, pageHeight, y };
+
+          // Conteúdo
+          for(const f of fields){
+            writeField(doc, f.label, data[f.key] || '', { link: !!f.link }, layout);
           }
 
-          function writeField(label, value){
-            doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0);
-            const labelLines = doc.splitTextToSize(pdfSafe(label), usable);
-            for (const ln of labelLines){ addPageIfNeeded(14); doc.text(ln, margin, y); y += 14; }
-
-            doc.setFont('helvetica','normal'); doc.setFontSize(11);
-            const valueText = (value ?? '—').toString();
-            const valueLines = doc.splitTextToSize(pdfSafe(valueText), usable);
-            for (const ln of valueLines){ addPageIfNeeded(18); doc.text(ln, margin, y); y += 18; }
-
-            y += 6; addPageIfNeeded();
-          }
-
-          for(const f of fields){ writeField(f.label, data[f.key] || ''); }
-
+          // QR no PDF
           if(qrImageDataURL){ 
             try{ 
               const qrW = 120, qrH = 120;
-              if (y + qrH > pageHeight - margin) { doc.addPage(); y = margin; }
-              doc.addImage(qrImageDataURL,'PNG',pageWidth - margin - qrW, y-16, qrW, qrH); 
-              y += qrH;
+              if (y.current + qrH > pageHeight - margin) { doc.addPage(); y.current = margin; }
+              doc.addImage(qrImageDataURL,'PNG',pageWidth - margin - qrW, y.current-16, qrW, qrH); 
+              y.current += qrH;
             }catch(e){ console.warn('QR no PDF:', e); } 
           }
 
+          // Rodapé
           doc.setFontSize(9); doc.setTextColor(120);
-          if (y + 20 > pageHeight - margin){ doc.addPage(); y = margin; }
+          if (y.current + 20 > pageHeight - margin){ doc.addPage(); y.current = margin; }
           doc.text('Gerado automaticamente pelo formulário do Prof. Marcelo', margin, pageHeight - margin/2);
 
-          const filename = `atividade-funcao-por-partes-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
+          const filename = `atividade-funcao-modular-${sanitizeFilename(data.turma)}-${sanitizeFilename(data.nome)}.pdf`;
+
+          // Download/abertura
           try{
             const blob = doc.output('blob');
             if(currentPdfUrl) { try{ URL.revokeObjectURL(currentPdfUrl); }catch(e){} }
@@ -359,8 +417,11 @@
       copyPageBtn.addEventListener('click', async ()=>{
         try{
           await navigator.clipboard.writeText(location.href);
-          copyPageBtn.textContent = 'Link copiado!'; setTimeout(()=> copyPageBtn.textContent='Copiar link da página', 2000);
-        }catch{ alert('Não foi possível copiar. Copie manualmente o endereço da barra do navegador.'); }
+          copyPageBtn.textContent = 'Link copiado!'; 
+          setTimeout(()=> copyPageBtn.textContent='Copiar link da página', 2000);
+        }catch{ 
+          alert('Não foi possível copiar. Copie manualmente o endereço da barra do navegador.'); 
+        }
       });
 
     }catch(err){
